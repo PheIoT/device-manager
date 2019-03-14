@@ -44,7 +44,7 @@ CREATE TABLE `t_deviceshadow`
   `productKey` varchar(255) DEFAULT NULL,
   `devKey`     varchar(255) DEFAULT NULL,
   `updateAt`   datetime     DEFAULT NULL,
-  `value`      text,
+  `payload`      text,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

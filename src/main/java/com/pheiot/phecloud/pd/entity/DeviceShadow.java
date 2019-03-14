@@ -32,6 +32,6 @@ public class DeviceShadow extends BaseEntity {
     private Timestamp updateAt;
 
     @Column(columnDefinition = " text COMMENT '影子最后的值'")
-    private String value;
+    private String payload;
 
 }

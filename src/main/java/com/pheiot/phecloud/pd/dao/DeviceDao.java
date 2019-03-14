@@ -13,20 +13,12 @@ import java.util.List;
 public interface DeviceDao extends PagingAndSortingRepository<Device, Long>, JpaSpecificationExecutor<Device> {
 
     /**
-     * 查询所有的设备
-     *
-     * @return
-     */
-    @Override
-    List<Device> findAll();
-
-    /**
      * 根据id查询设备
      *
-     * @param id id
+     * @param kay key
      * @return Device
      */
-    Device findDeviceById(Long id);
+    Device findByKay(String kay);
 
     /**
      * 根据id查询设备
@@ -34,7 +26,7 @@ public interface DeviceDao extends PagingAndSortingRepository<Device, Long>, Jpa
      * @param kay key
      * @return Device
      */
-    Device findDeviceByKay(String kay);
+    Device findByProductKeyAndKay(String productKey, String kay);
 
     /**
      * 根据设备名称查找
@@ -42,7 +34,7 @@ public interface DeviceDao extends PagingAndSortingRepository<Device, Long>, Jpa
      * @param name name
      * @return Device
      */
-    Device findDeviceByName(String name);
+    Device findByName(String name);
 
     /**
      * 根据设备名称进行模糊查询
@@ -51,15 +43,16 @@ public interface DeviceDao extends PagingAndSortingRepository<Device, Long>, Jpa
      * @return List
      */
     @Query(value = "select p from Device p where p.name like ?1%")
-    List<Device> findByDeviceLike(String name);
+    List<Device> findByNameLike(String name);
 
     /**
-     * 查找所有设备名称
+     * 根据keys集合，查找相应的设备
      *
-     * @return List<String>
+     * @param keys keys
      */
-    @Query("select device.name from Device device")
-    List<String> findDeviceNames();
+    @Modifying
+    @Query("select device from Device device where device.kay in (?1)")
+    List<Device>  findByKays(List<String> keys);
 
     /**
      * 批量删除
@@ -68,14 +61,14 @@ public interface DeviceDao extends PagingAndSortingRepository<Device, Long>, Jpa
      */
     @Modifying
     @Query("delete from Device device where device.id in (?1)")
-    void deleteDeviceByIds(List<Long> ids);
+    void deleteByIds(List<Long> ids);
 
     /**
      * 根据key删除设备
      *
      * @param kay kay
      */
-    void deleteDeviceByKay(String kay);
+    void deleteByKay(String kay);
 
     /**
      * 批量删除
@@ -84,5 +77,5 @@ public interface DeviceDao extends PagingAndSortingRepository<Device, Long>, Jpa
      */
     @Modifying
     @Query("delete from Device device where device.kay in (?1)")
-    void deleteDeviceByKeys(List<String> keys);
+    void deleteByKays(List<String> kays);
 }

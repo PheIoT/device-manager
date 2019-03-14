@@ -35,7 +35,7 @@ public class Device extends BaseEntity {
     private String isOnline;
 
     @Column(columnDefinition = " varchar(10) COMMENT '设备启用状态'")
-    private String isEnabled;
+    private Boolean isEnabled;
 
     @Column(columnDefinition = " varchar(255) COMMENT '备注")
     private String remark;
