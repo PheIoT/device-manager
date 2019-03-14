@@ -1,21 +1,21 @@
 package com.pheiot.phecloud.pd.openapi.v1;
 
+import com.google.common.collect.Maps;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import com.pheiot.phecloud.pd.openapi.ResponseEntity;
-import com.pheiot.phecloud.pd.openapi.dto.ProductVO;
+import com.pheiot.phecloud.pd.openapi.v1.vo.ProductVO;
 import com.pheiot.phecloud.pd.service.ProductService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
- * @author qinyimei @Data 2018/10/24 13:36
+ * @author Peter Li
  */
 @RestController
 @RequestMapping("/app/v1/product")
@@ -26,9 +26,8 @@ public class ProductFacade {
     @Resource
     private ProductService productService;
 
-    @PutMapping
+    @PostMapping
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductVO productVO) {
-
         ProductDto dto = ProductVO.vo2Dto(productVO);
 
         ProductDto responseDto;
@@ -42,6 +41,39 @@ public class ProductFacade {
             return ResponseEntity.ofFailed().data("Save product error.");
         }
 
-        return ResponseEntity.ofSuccess().data(responseVo);
+        return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
     }
+
+    @PatchMapping("/{key}/enabled")
+    public ResponseEntity<ProductDto> changeEnabledTo(@PathVariable("key") String productKey, @RequestParam("is_enabled") boolean isEnabled) {
+        try {
+            productService.changeEnabledTo(productKey, isEnabled);
+        } catch (ApplicationException ex) {
+            log.error("Updating product status error.{}", ex.getMessage());
+            return ResponseEntity.ofFailed().data("Updating product status error.");
+        }
+
+        Map response = Maps.newHashMap();
+        response.put("product_key", productKey);
+        response.put("is_enabled", isEnabled);
+
+        return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(response);
+    }
+
+    @GetMapping("/{key}")
+    public ResponseEntity<ProductDto> findProductByKey(@PathVariable("key") String productKey) {
+        ProductVO responseVo = new ProductVO();
+
+        try {
+            ProductDto dto = productService.findProductByKay(productKey);
+            ProductVO.dto2Vo(dto, responseVo);
+        } catch (ApplicationException ex) {
+            log.error("Find product error.{}", ex.getMessage());
+            return ResponseEntity.ofFailed().data("Find product status error.");
+        }
+
+
+        return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
+    }
+
 }

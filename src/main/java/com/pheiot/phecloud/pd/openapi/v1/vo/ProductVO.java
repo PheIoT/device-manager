@@ -1,4 +1,4 @@
-package com.pheiot.phecloud.pd.openapi.dto;
+package com.pheiot.phecloud.pd.openapi.v1.vo;
 
 import com.pheiot.bamboo.common.dto.AbstractValueObject;
 import com.pheiot.phecloud.pd.dto.ProductDto;
@@ -54,7 +54,7 @@ public class ProductVO extends AbstractValueObject {
         vo.setUser_key(dto.getUserKey());
         vo.setRemark(dto.getRemark());
         vo.setCreated_at(dto.getCreateAt().toString());
-        vo.setIs_enabled(dto.getIsEnabled());
+        vo.setIs_enabled(dto.isEnabled());
     }
 
     private static void convert2Dto(ProductVO vo, ProductDto dto) {
@@ -67,7 +67,7 @@ public class ProductVO extends AbstractValueObject {
 
 
         if (StringUtils.isNotBlank(vo.getCreated_at())) {
-            Timestamp ts = new Timestamp(System.currentTimeMillis());
+            Timestamp ts;
             String tsStr = vo.getCreated_at();
             try {
                 ts = Timestamp.valueOf(tsStr);
@@ -76,7 +76,7 @@ public class ProductVO extends AbstractValueObject {
                 ex.printStackTrace();
             }
         }
-        dto.setIsEnabled(vo.getIs_enabled());
+        dto.setEnabled(vo.getIs_enabled() == null ? true : false);
     }
 
 }

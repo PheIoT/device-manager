@@ -120,6 +120,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductDto findProductByKay(String key) {
+        if (StringUtils.isBlank(key)) {
+            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
+        }
+
+        Product product = productDao.findByKay(key);
+
+        if (product == null) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
+        }
+
+        ProductDto dto = BeanMapper.map(product, ProductDto.class);
+
+        return dto;
+    }
+
+    @Override
     public List<ProductDto> findAll(String userKey) {
         if (StringUtils.isBlank(userKey)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);

@@ -14,7 +14,7 @@ public class ProductDto extends AbstractValueObject {
     private String kay;
     private String secret;
     private String type;
-    private Boolean isEnabled;
+    private boolean isEnabled;
 
     @JsonFormat(
             pattern = "yyyy-MM-dd HH:mm:ss",

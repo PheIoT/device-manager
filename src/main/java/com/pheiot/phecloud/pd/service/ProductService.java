@@ -24,6 +24,14 @@ public interface ProductService {
     ProductDto findProductByName(String name);
 
     /**
+     * 根据产品kay查找产品
+     *
+     * @param key key
+     * @return ProductDto
+     */
+    ProductDto findProductByKay(String key);
+
+    /**
      * 查询所有产品
      *
      * @return List

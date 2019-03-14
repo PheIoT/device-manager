@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 @Data
 public class ResponseEntity<T> extends AbstractValueObject {
     private int status;
-    private String desc = "操作成功!";
     private boolean success = true;
     private T data;
 
@@ -46,11 +45,6 @@ public class ResponseEntity<T> extends AbstractValueObject {
 
     public ResponseEntity data(T data) {
         this.setData(data);
-        return this;
-    }
-
-    public ResponseEntity desc(String desc) {
-        this.setDesc(desc);
         return this;
     }
 

@@ -1,7 +1,8 @@
 package com.pheiot.phecloud.pd.api;
 
-import com.pheiot.phecloud.pd.openapi.dto.ProductVO;
+import com.pheiot.bamboo.common.utils.mapper.JsonMapper;
 import com.pheiot.phecloud.pd.openapi.v1.ProductFacade;
+import com.pheiot.phecloud.pd.openapi.v1.vo.ProductVO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,9 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-/**
- * @author:qinyimei @Data:2018/11/7 9:23
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration
@@ -35,7 +33,7 @@ public class ProductFacadeTest {
         mockMvc = MockMvcBuilders.standaloneSetup(productFacade).build();
     }
 
-    private static String PHE_APPLICATION_TOKEN = "phe_application_token";
+    private static String PHE_APPLICATION_TOKEN = "phe-application-token";
 
     @Test
     public void saveOrUpdate() throws Exception {
@@ -44,19 +42,46 @@ public class ProductFacadeTest {
         request.setProduct_type("normal");
         request.setUser_key("user-key-1");
 
-
-        String jsonString = com.alibaba.fastjson.JSONObject.toJSONString(request);
+        String jsonString = JsonMapper.defaultMapper().toJson(request);
         MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.put("/app/v1/product")
+                .perform(MockMvcRequestBuilders.post("/app/v1/product")
                         .contentType(MediaType.APPLICATION_JSON)
-//                        .header(PHE_APPLICATION_TOKEN,"abc")
-//                        .accept(MediaType.valueOf(PHE_APPLICATION_TOKEN))
+                        .header(PHE_APPLICATION_TOKEN, "abc")
                         .content(jsonString)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
-        System.out.println("输出 " + mvcResult.getResponse().getContentAsString());
+
+    }
+
+    @Test
+    public void changeEnabledTo() throws Exception {
+        String kay = "7HQoQxINSr";
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.patch("/app/v1/product/{kay}/enabled", kay)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(PHE_APPLICATION_TOKEN, "abc")
+                        .param("is_enabled", "false")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+    }
+
+    @Test
+    public void findProductByKey() throws Exception {
+        String kay = "7HQoQxINSr";
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.get("/app/v1/product/{key}", kay)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(PHE_APPLICATION_TOKEN, "abc")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
 
     }
 }
