@@ -12,10 +12,18 @@ public interface DeviceService {
     /**
      * 根据产品kay查找设备
      *
-     * @param key key
+     * @param dkey device key
      * @return ProductDto
      */
-    DeviceDto findByKay(String key);
+    DeviceDto findByKey(String dkey);
+
+    /**
+     * 根据产品kay查找设备
+     *
+     * @param pkey product key
+     * @return ProductDto
+     */
+    DeviceDto findByProductKey(String pkey);
 
     /**
      * 绑定设备
@@ -36,18 +44,21 @@ public interface DeviceService {
     /**
      * 修改设备状态
      *
+     * @param dkey      device key
      * @param isEnabled isEnabled
      */
     @Transactional(rollbackFor = Exception.class)
-    void changeEnabledTo(String key, boolean isEnabled);
+    void changeEnabledTo(String dkey, boolean isEnabled);
 
 
     /**
      * 解除绑定 设备
      *
-     * @param keys key
+     * @param pkey  product key
+     * @param dkeys device keys
      */
     @Transactional(rollbackFor = Exception.class)
-    Map<String, List<String>> unbinding(String productKey, List<String> keys);
+    Map<String, List<String>> unbinding(String pkey, List<String> dkeys);
+
 
 }

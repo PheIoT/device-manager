@@ -15,43 +15,26 @@ public interface ProductDao extends PagingAndSortingRepository<Product, Long>, J
     /**
      * 查询用户所有的产品
      *
-     * @param userKey userKey
+     * @param ukey userKey
      * @return
      */
-    List<Product> findByUserKey(String userKey);
+    List<Product> findByUkey(String ukey);
 
     /**
      * 根据id查询产品
      *
-     * @param kay key
+     * @param dkey key
      * @return Product
      */
-    Product findByKay(String kay);
+    Product findByPkey(String dkey);
 
     /**
      * 根据产品名称查找
      *
-     * @param name name
+     * @param displayName displayName
      * @return Product
      */
-    Product findByName(String name);
-
-    /**
-     * 根据产品名称进行模糊查询
-     *
-     * @param name name
-     * @return List
-     */
-    @Query(value = "select p from Product p where p.name like ?1% and p.userKey = ?2")
-    List<Product> findByNameLike(String name, String userKey);
-
-    /**
-     * 查找所有产品名称
-     *
-     * @return List<String>
-     */
-    @Query("select product.name from Product product where product.userKey = ?1")
-    List<String> findProductNames(String userKey);
+    Product findByDisplayName(String displayName);
 
     /**
      * 批量删除
@@ -59,23 +42,23 @@ public interface ProductDao extends PagingAndSortingRepository<Product, Long>, J
      * @param ids ids
      */
     @Modifying
-    @Query("delete from Product product where product.id in (?1)")
+    @Query("delete from Product p where p.id in (?1)")
     void deleteByIds(List<Long> ids);
 
     /**
      * 根据key删除产品
      *
-     * @param kay kay
+     * @param pkey product key
      * @return Product
      */
-    void deleteProductByKay(String kay);
+    void deleteProductByPkey(String pkey);
 
     /**
      * 批量删除
      *
-     * @param keys kay
+     * @param pkeys product keys
      */
     @Modifying
-    @Query("delete from Product product where product.kay in (?1)")
-    void deleteByKeys(List<String> keys);
+    @Query("delete from Product p where p.pkey in (?1)")
+    void deleteByPkeys(List<String> pkeys);
 }

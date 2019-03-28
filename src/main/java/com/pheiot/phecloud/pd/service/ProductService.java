@@ -16,27 +16,19 @@ public interface ProductService {
     ProductDto findProductById(Long id);
 
     /**
-     * 根据产品名称查找产品
-     *
-     * @param name name
-     * @return ProductDto
-     */
-    ProductDto findProductByName(String name);
-
-    /**
-     * 根据产品kay查找产品
+     * 根据产品key查找产品
      *
      * @param key key
      * @return ProductDto
      */
-    ProductDto findProductByKay(String key);
+    ProductDto findProductByKey(String key);
 
     /**
      * 查询所有产品
      *
      * @return List
      */
-    List<ProductDto> findAll(String userKey);
+    List<ProductDto> findProductByUserKey(String userKey);
 
     /**
      * 增加产品
@@ -71,10 +63,4 @@ public interface ProductService {
     @Transactional(rollbackFor = Exception.class)
     void deleteById(Long id);
 
-    /**
-     * 查找所有产品名称列表
-     *
-     * @return List<String>
-     */
-    List<String> findProductNames(String userkey);
 }

@@ -65,7 +65,7 @@ public class ProductFacade {
         ProductVO responseVo = new ProductVO();
 
         try {
-            ProductDto dto = productService.findProductByKay(productKey);
+            ProductDto dto = productService.findProductByKey(productKey);
             ProductVO.dto2Vo(dto, responseVo);
         } catch (ApplicationException ex) {
             log.error("Find product error.{}", ex.getMessage());

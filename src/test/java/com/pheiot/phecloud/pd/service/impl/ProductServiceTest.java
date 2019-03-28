@@ -34,8 +34,8 @@ public class ProductServiceTest {
 	@Test
 	public void save() {
 		Product entity = new Product();
-		entity.setKay("key1");
-		entity.setName("testProduct");
+		entity.setPkey("key1");
+		entity.setDisplayName("testProduct");
 
 		ProductDto dto = BeanMapper.map(entity, ProductDto.class);
 		service.save(dto);
@@ -46,8 +46,8 @@ public class ProductServiceTest {
 	@Test
 	public void findById() {
 		Product entity = new Product();
-		entity.setKay("key1");
-		entity.setName("testProduct");
+		entity.setPkey("key1");
+		entity.setDisplayName("testProduct");
 
 		Mockito.when(mockProductDao.findById(1L)).thenReturn(Optional.of(entity));
 

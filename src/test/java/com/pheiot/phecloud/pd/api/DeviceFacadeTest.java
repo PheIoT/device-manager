@@ -37,7 +37,7 @@ public class DeviceFacadeTest {
         mockMvc = MockMvcBuilders.standaloneSetup(facade).build();
     }
 
-    private static String PHE_APPLICATION_TOKEN = "phe-application-token";
+    private static String PHE_APPLICATION_USER_TOKEN = "phe-application-user-token";
 
     @Test
     public void unbinding() throws Exception {
@@ -53,7 +53,7 @@ public class DeviceFacadeTest {
         MvcResult mvcResult = mockMvc
                 .perform(MockMvcRequestBuilders.post("/app/v1/device/unbinding")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(PHE_APPLICATION_TOKEN, "abc")
+                        .header(PHE_APPLICATION_USER_TOKEN, "abc")
                         .content(jsonString)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -68,7 +68,7 @@ public class DeviceFacadeTest {
         MvcResult mvcResult = mockMvc
                 .perform(MockMvcRequestBuilders.patch("/app/v1/product/{kay}/enabled", kay)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(PHE_APPLICATION_TOKEN, "abc")
+                        .header(PHE_APPLICATION_USER_TOKEN, "abc")
                         .param("is_enabled", "false")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -84,7 +84,7 @@ public class DeviceFacadeTest {
         MvcResult mvcResult = mockMvc
                 .perform(MockMvcRequestBuilders.get("/app/v1/product/{key}", kay)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(PHE_APPLICATION_TOKEN, "abc")
+                        .header(PHE_APPLICATION_USER_TOKEN, "abc")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())

@@ -1,6 +1,5 @@
 package com.pheiot.phecloud.pd.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pheiot.bamboo.common.persistence.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,7 +7,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 
 
@@ -22,14 +24,17 @@ import java.sql.Timestamp;
 @EntityListeners(AuditingEntityListener.class)
 public class Device extends BaseEntity {
 
-    @Column(columnDefinition = " varchar(255) COMMENT '设备名称' ")
-    private String name;
+    @Column(columnDefinition = " varchar(32) COMMENT '设备key'")
+    private String dkey;
 
-    @Column(columnDefinition = " varchar(50) COMMENT '设备key'")
-    private String kay;
+    @Column(columnDefinition = " varchar(255) COMMENT '设备显示名称' ")
+    private String displayName;
 
-    @Column(columnDefinition = " varchar(36) COMMENT 'MAC地址'")
-    private String mac;
+    @Column(columnDefinition = " varchar(32) COMMENT '设备编码，例如MAC地址或者SN等'")
+    private String dsn;
+
+    @Column(columnDefinition = "varchar(32) COMMENT '设备秘钥'")
+    private String secret;
 
     @Column(columnDefinition = " varchar(10) COMMENT '设备在线状态'")
     private String isOnline;
@@ -40,16 +45,14 @@ public class Device extends BaseEntity {
     @Column(columnDefinition = " varchar(255) COMMENT '备注")
     private String remark;
 
-    @Column(columnDefinition = " varchar(50) COMMENT '产品Key' ")
-    private String productKey;
+    @Column(columnDefinition = " varchar(32) COMMENT '所属产品Key' ")
+    private String pkey;
 
     @CreationTimestamp
     @Column(columnDefinition = " datetime COMMENT '创建时间' ", nullable = false, updatable = false)
-    @JsonFormat(pattern = " yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Timestamp createAt;
 
     @Column(columnDefinition = " datetime COMMENT '更新时间' ", nullable = true, insertable = false)
-    @JsonFormat(pattern = " yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @UpdateTimestamp
     private Timestamp updateAt;
 }

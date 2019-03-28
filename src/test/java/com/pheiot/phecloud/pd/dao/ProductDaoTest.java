@@ -29,12 +29,12 @@ public class ProductDaoTest {
     @Transactional
     public void save() {
         Product product = new Product();
-        product.setName("ABCDE");
-        product.setType(RandomStringUtils.randomAlphanumeric(5));
+        product.setDisplayName("ABCDE");
+        product.setNodeType("device");
         productDao.save(product);
 
-        Product p = productDao.findByName("ABCDE");
-        assertThat(p.getName()).isEqualTo("ABCDE");
+        Product p = productDao.findByDisplayName("ABCDE");
+        assertThat(p.getDisplayName()).isEqualTo("ABCDE");
     }
 
     @Test
@@ -43,8 +43,8 @@ public class ProductDaoTest {
         List<Long> ids = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             Product product = new Product();
-            product.setName(RandomStringUtils.randomAlphanumeric(5));
-            product.setType(RandomStringUtils.randomAlphanumeric(5));
+            product.setDisplayName(RandomStringUtils.randomAlphanumeric(5));
+            product.setNodeType("device");
             productDao.save(product);
             ids.add(product.getId());
         }
@@ -54,43 +54,11 @@ public class ProductDaoTest {
     }
 
     /**
-     * 查询所有的产品名称
-     */
-    @Test
-    @Transactional
-    public void listAllProductNames() {
-        List<String> names = productDao.findProductNames("userKey");
-        assertThat(names.size()).isNotNull();
-    }
-
-    /**
-     * 根据产品名称进行模糊查询
-     */
-    @Test
-    @Transactional
-    public void findProductByNameLike() {
-        for (int i = 0; i < 3; i++) {
-            Product product = new Product();
-            product.setKay(RandomStringUtils.randomAlphanumeric(32));
-            product.setName("s" + RandomStringUtils.randomAlphanumeric(5));
-            product.setType(RandomStringUtils.randomAlphanumeric(5));
-            product.setUserKey("userkey");
-            productDao.save(product);
-        }
-        List<Product> lists = productDao.findByNameLike("s", "userkey");
-        if (lists.size() != 0) {
-            for (Product p : lists) {
-                System.out.println(p.getId() + " | " + p.getName());
-            }
-        }
-    }
-
-    /**
      * 根据产品ID查询
      */
     @Test
     public void findById() {
-        Optional<Product> currentProduct = productDao.findById(112L);
+        Optional<Product> currentProduct = productDao.findById(1L);
         assertThat(currentProduct.get()).isNotNull();
     }
 
@@ -99,8 +67,8 @@ public class ProductDaoTest {
      */
     @Test
     public void findByName() {
-        Optional<Product> currentProduct = productDao.findById(112L);
-        Product targetProduct = productDao.findByName(currentProduct.get().getName());
+        Optional<Product> currentProduct = productDao.findById(1L);
+        Product targetProduct = productDao.findByDisplayName(currentProduct.get().getDisplayName());
         Assert.assertEquals(targetProduct, currentProduct);
     }
 }

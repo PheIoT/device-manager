@@ -81,7 +81,7 @@ public class DeviceFacade {
         DeviceVO responseVo = new DeviceVO();
 
         try {
-            DeviceDto dto = deviceService.findByKay(key);
+            DeviceDto dto = deviceService.findByKey(key);
             DeviceVO.dto2Vo(dto, responseVo);
         } catch (ApplicationException ex) {
             log.error("Find device error.{}", ex.getMessage());

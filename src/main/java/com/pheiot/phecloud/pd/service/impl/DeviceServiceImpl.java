@@ -3,13 +3,13 @@ package com.pheiot.phecloud.pd.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pheiot.bamboo.common.utils.mapper.BeanMapper;
-import com.pheiot.bamboo.common.utils.number.RandomUtil;
 import com.pheiot.phecloud.pd.dao.DeviceDao;
 import com.pheiot.phecloud.pd.dto.DeviceDto;
 import com.pheiot.phecloud.pd.entity.Device;
 import com.pheiot.phecloud.pd.service.DeviceService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import com.pheiot.phecloud.pd.utils.ExceptionCode;
+import com.pheiot.phecloud.pd.utils.KeyGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +29,12 @@ public class DeviceServiceImpl implements DeviceService {
 
 
     @Override
-    public DeviceDto findByKay(String key) {
+    public DeviceDto findByKey(String key) {
         if (StringUtils.isBlank(key)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        Device device = deviceDao.findByKay(key);
+        Device device = deviceDao.findByDkey(key);
 
         if (device == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -46,13 +46,20 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
+    public DeviceDto findByProductKey(String pkey) {
+        return null;
+    }
+
+    @Override
     public DeviceDto binding(DeviceDto deviceDto) {
         if (deviceDto == null) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
         Device device = BeanMapper.map(deviceDto, Device.class);
-        device.setKay(RandomUtil.randomStringFixLength(10));
+
+        device.setDkey(KeyGenerator.generateKey());
+        device.setSecret(KeyGenerator.generateSecret());
 
         deviceDao.save(device);
 
@@ -67,7 +74,7 @@ public class DeviceServiceImpl implements DeviceService {
         if (deviceDto == null || StringUtils.isBlank(deviceDto.getKay())) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
-        Device device = deviceDao.findByKay(deviceDto.getKay());
+        Device device = deviceDao.findByDkey(deviceDto.getKay());
 
         if (device == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -86,7 +93,7 @@ public class DeviceServiceImpl implements DeviceService {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        Device device = deviceDao.findByKay(key);
+        Device device = deviceDao.findByDkey(key);
 
         if (device == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -95,7 +102,7 @@ public class DeviceServiceImpl implements DeviceService {
         device.setIsEnabled(isEnabled);
         deviceDao.save(device);
 
-        logger.info("Change enabled to {} for product:{}", isEnabled, device.getName());
+        logger.info("Change enabled to {} for product:{}", isEnabled, device.getDisplayName());
     }
 
     @Override
@@ -107,13 +114,13 @@ public class DeviceServiceImpl implements DeviceService {
         List<String> success = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
         for (String key : keys) {
-            Device entity = deviceDao.findByProductKeyAndKay(productKey, key);
+            Device entity = deviceDao.findByPkeyAndDkey(productKey, key);
             if (entity == null) {
                 failed.add(key);
                 continue;
             }
             try {
-                deviceDao.deleteByKay(key);
+                deviceDao.deleteByDkey(key);
                 success.add(key);
                 logger.debug("Delete device success: {}", key);
             } catch (Exception ex) {

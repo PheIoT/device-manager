@@ -2,13 +2,13 @@ package com.pheiot.phecloud.pd.service.impl;
 
 import com.google.common.collect.Lists;
 import com.pheiot.bamboo.common.utils.mapper.BeanMapper;
-import com.pheiot.bamboo.common.utils.number.RandomUtil;
 import com.pheiot.phecloud.pd.dao.ProductDao;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import com.pheiot.phecloud.pd.entity.Product;
 import com.pheiot.phecloud.pd.service.ProductService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import com.pheiot.phecloud.pd.utils.ExceptionCode;
+import com.pheiot.phecloud.pd.utils.KeyGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +52,8 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Product product = BeanMapper.map(productDto, Product.class);
-        product.setKay(RandomUtil.randomStringFixLength(10));
-        product.setSecret(RandomUtil.randomStringFixLength(12));
+        product.setPkey(KeyGenerator.generateKey());
+        product.setSecret(KeyGenerator.generateSecret());
 
         productDao.save(product);
 
@@ -64,13 +64,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-
     @Override
     public void update(ProductDto productDto) {
         if (productDto == null || StringUtils.isBlank(productDto.getKay())) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
-        Product product = productDao.findByKay(productDto.getKay());
+        Product product = productDao.findByPkey(productDto.getKay());
 
         if (product == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -89,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        Product product = productDao.findByKay(key);
+        Product product = productDao.findByPkey(key);
 
         if (product == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -99,33 +98,16 @@ public class ProductServiceImpl implements ProductService {
 
         productDao.save(product);
 
-        logger.info("Change enabled to {} for product:{}", isEnabled, product.getName());
+        logger.info("Change enabled to {} for product:{}", isEnabled, product.getDisplayName());
     }
 
     @Override
-    public ProductDto findProductByName(String name) {
-        if (StringUtils.isBlank(name)) {
-            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
-        }
-
-        Product product = productDao.findByName(name);
-
-        if (product == null) {
-            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
-        }
-
-        ProductDto dto = BeanMapper.map(product, ProductDto.class);
-
-        return dto;
-    }
-
-    @Override
-    public ProductDto findProductByKay(String key) {
+    public ProductDto findProductByKey(String key) {
         if (StringUtils.isBlank(key)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        Product product = productDao.findByKay(key);
+        Product product = productDao.findByPkey(key);
 
         if (product == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -137,12 +119,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findAll(String userKey) {
+    public List<ProductDto> findProductByUserKey(String userKey) {
         if (StringUtils.isBlank(userKey)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        List<Product> list = productDao.findByUserKey(userKey);
+        List<Product> list = productDao.findByUkey(userKey);
 
         List<ProductDto> dtoList = Lists.newArrayList();
 
@@ -167,17 +149,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productDao.deleteById(id);
-        logger.info("Delete product:{}", product.get().getName());
-    }
-
-    @Override
-    public List<String> findProductNames(String userKey) {
-        if (StringUtils.isBlank(userKey)) {
-            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
-        }
-
-        List<String> list = productDao.findProductNames(userKey);
-
-        return list;
+        logger.info("Delete product:{}", product.get().getDisplayName());
     }
 }
