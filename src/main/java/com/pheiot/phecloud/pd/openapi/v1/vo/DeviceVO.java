@@ -14,8 +14,8 @@ public class DeviceVO extends AbstractValueObject {
     private String dev_key;
     //设备名称
     private String dev_name;
-    // mac 地址
-    private String mac;
+    // 设备识别码，可以为mac地址，sn序列号等
+    private String dev_sn;
     //是否启用
     private Boolean is_enabled;
     //是否在线
@@ -44,21 +44,21 @@ public class DeviceVO extends AbstractValueObject {
     }
 
     private static void convert2Vo(DeviceDto dto, DeviceVO vo) {
-        vo.setProduct_key(dto.getProductKey());
-        vo.setProduct_type(dto.getProductType());
-        vo.setDev_key(dto.getKay());
-        vo.setDev_name(dto.getName());
-        vo.setMac(dto.getMac());
+        vo.setProduct_key(dto.getPkey());
+        vo.setProduct_type(dto.getNodeType());
+        vo.setDev_key(dto.getDkey());
+        vo.setDev_name(dto.getDisplayName());
+        vo.setDev_sn(dto.getDsn());
         vo.setIs_enabled(dto.getIsEnabled());
         vo.setRemark(dto.getRemark());
     }
 
     private static void convert2Dto(DeviceVO vo, DeviceDto dto) {
-        dto.setProductKey(vo.getProduct_key());
-        dto.setProductType(vo.getProduct_type());
-        dto.setKay(vo.getProduct_key());
-        dto.setName(vo.getDev_name());
-        dto.setMac(vo.getMac());
+        dto.setPkey(vo.getProduct_key());
+        dto.setNodeType(vo.getProduct_type());
+        dto.setDkey(vo.getProduct_key());
+        dto.setDisplayName(vo.getDev_name());
+        dto.setDsn(vo.getDev_sn());
         dto.setIsEnabled(vo.getIs_enabled());
         dto.setRemark(vo.getRemark());
     }

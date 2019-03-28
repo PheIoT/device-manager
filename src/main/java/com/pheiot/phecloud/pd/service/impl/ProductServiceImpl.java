@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
         productDao.save(product);
 
         ProductDto dto = BeanMapper.map(product, ProductDto.class);
-        logger.info("Save product:{}", productDto.getName());
+        logger.info("Save product:{}", productDto.getDisplayName());
 
         return dto;
     }
@@ -66,10 +66,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void update(ProductDto productDto) {
-        if (productDto == null || StringUtils.isBlank(productDto.getKay())) {
+        if (productDto == null || StringUtils.isBlank(productDto.getPkey())) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
-        Product product = productDao.findByPkey(productDto.getKay());
+        Product product = productDao.findByPkey(productDto.getDisplayName());
 
         if (product == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -79,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
 
         productDao.save(product);
 
-        logger.info("Update product:{}", productDto.getName());
+        logger.info("Update product:{}", productDto.getDisplayName());
     }
 
     @Override

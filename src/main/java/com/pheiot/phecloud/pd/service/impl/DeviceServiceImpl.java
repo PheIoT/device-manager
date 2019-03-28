@@ -64,17 +64,17 @@ public class DeviceServiceImpl implements DeviceService {
         deviceDao.save(device);
 
         DeviceDto dto = BeanMapper.map(device, DeviceDto.class);
-        logger.info("Save product:{}", dto.getName());
+        logger.info("Save product:{}", dto.getDisplayName());
 
         return dto;
     }
 
     @Override
     public void update(DeviceDto deviceDto) {
-        if (deviceDto == null || StringUtils.isBlank(deviceDto.getKay())) {
+        if (deviceDto == null || StringUtils.isBlank(deviceDto.getDkey())) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
-        Device device = deviceDao.findByDkey(deviceDto.getKay());
+        Device device = deviceDao.findByDkey(deviceDto.getDkey());
 
         if (device == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -84,7 +84,7 @@ public class DeviceServiceImpl implements DeviceService {
 
         deviceDao.save(device);
 
-        logger.info("Update product:{}", deviceDto.getName());
+        logger.info("Update product:{}", deviceDto.getDisplayName());
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.pheiot.phecloud.pd.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pheiot.bamboo.common.dto.AbstractValueObject;
 import lombok.Data;
 
@@ -10,18 +9,14 @@ import java.sql.Timestamp;
 public class ProductDto extends AbstractValueObject {
 
     private Long id;
-    private String name;
-    private String kay;
+    private String displayName;
+    private String pkey;
     private String secret;
-    private String type;
+    private String nodeType;
+    private String commType;
     private boolean isEnabled;
-
-    @JsonFormat(
-            pattern = "yyyy-MM-dd HH:mm:ss",
-            timezone = "GMT+8"
-    )
     private Timestamp createAt;
+    private Timestamp updateAt;
     private String remark;
-
-    private String userKey;
+    private String ukey;
 }

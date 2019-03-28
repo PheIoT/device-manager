@@ -39,7 +39,7 @@ public class ProductFacadeTest {
     public void saveOrUpdate() throws Exception {
         ProductVO request = new ProductVO();
         request.setProduct_name("apiTest");
-        request.setProduct_type("normal");
+        request.setNode_type("device");
         request.setUser_key("user-key-1");
 
         String jsonString = JsonMapper.defaultMapper().toJson(request);

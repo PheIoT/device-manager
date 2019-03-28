@@ -55,7 +55,7 @@ public class ProductServiceTest {
 
 		Mockito.verify(mockProductDao).findById(1L);
 
-		assertThat(dto.getKay()).isEqualTo("key1");
+		assertThat(dto.getPkey()).isEqualTo("key1");
 	}
 
 }

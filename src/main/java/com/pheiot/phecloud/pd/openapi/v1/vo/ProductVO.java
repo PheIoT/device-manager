@@ -15,8 +15,10 @@ public class ProductVO extends AbstractValueObject {
     private String product_secret;
     //产品名称
     private String product_name;
-    //类型 Normal / Gateway
-    private String product_type;
+    //类型 Device / Gateway
+    private String node_type;
+    //类型 wifi / G345 / BLE
+    private String comm_type;
     //用户key
     private String user_key;
     //备注
@@ -47,22 +49,24 @@ public class ProductVO extends AbstractValueObject {
     }
 
     private static void convert2Vo(ProductDto dto, ProductVO vo) {
-        vo.setProduct_key(dto.getKay());
-        vo.setProduct_name(dto.getName());
+        vo.setProduct_key(dto.getPkey());
+        vo.setProduct_name(dto.getDisplayName());
         vo.setProduct_secret(dto.getSecret());
-        vo.setProduct_type(dto.getType());
-        vo.setUser_key(dto.getUserKey());
+        vo.setNode_type(dto.getNodeType());
+        vo.setComm_type(dto.getCommType());
+        vo.setUser_key(dto.getUkey());
         vo.setRemark(dto.getRemark());
         vo.setCreated_at(dto.getCreateAt().toString());
         vo.setIs_enabled(dto.isEnabled());
     }
 
     private static void convert2Dto(ProductVO vo, ProductDto dto) {
-        dto.setKay(vo.getProduct_key());
-        dto.setName(vo.getProduct_name());
+        dto.setPkey(vo.getProduct_key());
+        dto.setDisplayName(vo.getProduct_name());
         dto.setSecret(vo.getProduct_secret());
-        dto.setType(vo.getProduct_type());
-        dto.setUserKey(vo.getUser_key());
+        dto.setNodeType(vo.getProduct_key());
+        dto.setCommType(vo.getComm_type());
+        dto.setUkey(vo.getUser_key());
         dto.setRemark(vo.getRemark());
 
 

@@ -12,23 +12,16 @@ import java.sql.Timestamp;
 @Data
 public class DeviceDto extends AbstractValueObject {
 
-    private String name;
-
-    private String kay;
-
-    private String mac;
-
-    private String isOnline;
-
+    private String dkey;
+    private String displayName;
+    private String dsn;
+    private String secret;
+    private Boolean isOnline;
     private Boolean isEnabled;
-
     private String remark;
 
-    private String productKey;
-
-    private String productType;
-
+    private String pkey;
+    private String nodeType;
     private Timestamp createAt;
-
     private Timestamp updateAt;
 }
