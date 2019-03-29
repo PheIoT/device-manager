@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. For PheIot Group.
+ */
+
 package com.pheiot.phecloud.pd.openapi.v1;
 
 import com.google.common.collect.Maps;

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. For PheIot Group.
+ */
+
 package com.pheiot.phecloud.pd.dto;
 
 import com.pheiot.bamboo.common.dto.AbstractValueObject;
@@ -7,8 +11,6 @@ import java.sql.Timestamp;
 
 @Data
 public class ProductDto extends AbstractValueObject {
-
-    private Long id;
     private String displayName;
     private String pkey;
     private String secret;

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. For PheIot Group.
+ */
+
 package com.pheiot.phecloud.pd.utils;
 
 import com.pheiot.bamboo.common.utils.number.RandomUtil;

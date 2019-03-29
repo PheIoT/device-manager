@@ -57,3 +57,23 @@ CREATE TABLE `t_product`
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
+
+insert into t_product
+values (1, 'pkey', '测试项目', 'testkey-12345678901234567890abcd', 'secret-12345', 'wifi', 'disabled',
+        '2019-03-29 10:00:03', null, 'remark test', 'user-12345678901234567890abcdgef');
+
+insert into t_productproperty
+values (1, 'LED-ONOFF', 'LED开关', 'boolean', '', 'rw',
+        'testkey-12345678901234567890abcd');
+
+insert into t_productproperty
+values (2, 'LED-RED', 'LED颜色-red', 'number', '{ "addition": 1, "max": 255, "ratio": 1, "min": 0 }', 'rw',
+        'testkey-12345678901234567890abcd');
+
+insert into t_productproperty
+values (3, 'LED-YELLOW', 'LED颜色-yellow', 'number', '{ "addition": 1, "max": 255, "ratio": 1, "min": 0 }', 'rw',
+        'testkey-12345678901234567890abcd');
+
+insert into t_productproperty
+values (4, 'LED-BLUE', 'LED颜色-blue', 'number', '{ "addition": 1, "max": 255, "ratio": 1, "min": 0 }', 'rw',
+        'testkey-12345678901234567890abcd');

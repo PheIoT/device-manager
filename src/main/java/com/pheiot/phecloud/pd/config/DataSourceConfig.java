@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. For PheIot Group.
+ */
+
 package com.pheiot.phecloud.pd.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
