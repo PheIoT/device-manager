@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Peter Li
  */
 @RestController
-@RequestMapping("/app/v1/device")
+@RequestMapping("/api/v1/device")
 public class DeviceFacade {
 
     private static Logger log = LoggerFactory.getLogger(DeviceFacade.class);
@@ -111,7 +111,7 @@ public class DeviceFacade {
 
         Map response = Maps.newHashMap();
         response.put("dev_key", deviceVO.getDev_key());
-        response.put("dev_nameBODY", deviceVO.getRemark());
+        response.put("dev_name", deviceVO.getRemark());
         response.put("is_enabled", deviceVO.getIs_enabled());
 
         return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);

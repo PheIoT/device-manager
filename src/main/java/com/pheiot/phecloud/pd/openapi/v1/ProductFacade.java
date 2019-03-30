@@ -22,7 +22,7 @@ import java.util.Map;
  * @author Peter Li
  */
 @RestController
-@RequestMapping("/app/v1/product")
+@RequestMapping("/api/v1/product")
 public class ProductFacade {
 
     private static Logger log = LoggerFactory.getLogger(ProductFacade.class);
