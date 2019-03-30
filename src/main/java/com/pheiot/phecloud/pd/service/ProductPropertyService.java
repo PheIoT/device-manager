@@ -5,6 +5,7 @@
 package com.pheiot.phecloud.pd.service;
 
 import com.pheiot.phecloud.pd.dto.ProductPropertyDto;
+import com.pheiot.phecloud.pd.dto.ProductPropertyFullDto;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -28,6 +29,14 @@ public interface ProductPropertyService {
      * @return ProductDto
      */
     List<ProductPropertyDto> findByProductKey(String productKey);
+
+    /**
+     * 根据产品key查找数据点
+     *
+     * @param productKey productKey
+     * @return ProductDto
+     */
+    ProductPropertyFullDto findFullByProductKey(String productKey);
 
     /**
      * 增加产品数据点

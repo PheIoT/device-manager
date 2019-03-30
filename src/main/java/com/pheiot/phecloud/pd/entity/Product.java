@@ -39,7 +39,7 @@ public class Product extends BaseEntity {
     @Column(columnDefinition = "varchar(20) COMMENT '产品通信类型，wifi/g345/ble'")
     private String commType;
 
-    @Column(columnDefinition = "varchar(20) COMMENT '产品状态，是否启用'")
+    @Column(columnDefinition = "bit COMMENT '产品状态，是否启用'")
     private Boolean isEnabled;
 
     @CreationTimestamp

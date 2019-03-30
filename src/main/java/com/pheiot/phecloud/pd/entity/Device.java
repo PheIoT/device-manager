@@ -40,10 +40,10 @@ public class Device extends BaseEntity {
     @Column(columnDefinition = "varchar(32) COMMENT '设备秘钥'")
     private String secret;
 
-    @Column(columnDefinition = " varchar(10) COMMENT '设备在线状态'")
-    private String isOnline;
+    @Column(columnDefinition = " bit COMMENT '设备在线状态'")
+    private Boolean isOnline;
 
-    @Column(columnDefinition = " varchar(10) COMMENT '设备启用状态'")
+    @Column(columnDefinition = " bit COMMENT '设备启用状态'")
     private Boolean isEnabled;
 
     @Column(columnDefinition = " varchar(255) COMMENT '备注")

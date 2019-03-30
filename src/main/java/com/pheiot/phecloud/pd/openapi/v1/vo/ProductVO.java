@@ -61,7 +61,7 @@ public class ProductVO extends AbstractValueObject {
         vo.setUser_key(dto.getUkey());
         vo.setRemark(dto.getRemark());
         vo.setCreated_at(dto.getCreateAt().toString());
-        vo.setIs_enabled(dto.isEnabled());
+        vo.setIs_enabled(dto.getIsEnabled());
     }
 
     private static void convert2Dto(ProductVO vo, ProductDto dto) {
@@ -84,7 +84,7 @@ public class ProductVO extends AbstractValueObject {
                 ex.printStackTrace();
             }
         }
-        dto.setEnabled(vo.getIs_enabled() == null ? true : false);
+        dto.setIsEnabled(vo.getIs_enabled() == null ? true : false);
     }
 
 }

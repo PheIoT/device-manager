@@ -6,8 +6,11 @@ package com.pheiot.phecloud.pd.service.impl;
 
 import com.google.common.collect.Lists;
 import com.pheiot.bamboo.common.utils.mapper.BeanMapper;
+import com.pheiot.phecloud.pd.dao.ProductDao;
 import com.pheiot.phecloud.pd.dao.ProductPropertyDao;
 import com.pheiot.phecloud.pd.dto.ProductPropertyDto;
+import com.pheiot.phecloud.pd.dto.ProductPropertyFullDto;
+import com.pheiot.phecloud.pd.entity.Product;
 import com.pheiot.phecloud.pd.entity.ProductProperty;
 import com.pheiot.phecloud.pd.service.ProductPropertyService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
@@ -28,6 +31,8 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
     @Autowired
     private ProductPropertyDao productPropertyDao;
 
+    @Autowired
+    private ProductDao productDao;
 
     @Override
     public ProductPropertyDto findByCode(String productKey, String code) {
@@ -61,6 +66,34 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
         }
 
         return dtoList;
+    }
+
+    @Override
+    public ProductPropertyFullDto findFullByProductKey(String productKey) {
+        if (StringUtils.isBlank(productKey)) {
+            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
+        }
+
+        Product product = productDao.findByPkey(productKey);
+
+        if (product == null) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
+        }
+
+        List<ProductProperty> entities = productPropertyDao.findByPkey(productKey);
+        List<ProductPropertyDto> dtoList = Lists.newArrayList();
+
+        for (ProductProperty entity : entities) {
+            ProductPropertyDto dto = BeanMapper.map(entity, ProductPropertyDto.class);
+            dtoList.add(dto);
+        }
+
+        ProductPropertyFullDto dto = new ProductPropertyFullDto();
+        dto.setPkey(product.getPkey());
+        dto.setPDisplayName(product.getDisplayName());
+        dto.setAttr(dtoList);
+
+        return dto;
     }
 
     @Override

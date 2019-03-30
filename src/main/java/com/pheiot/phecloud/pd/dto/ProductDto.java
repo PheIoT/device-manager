@@ -16,7 +16,7 @@ public class ProductDto extends AbstractValueObject {
     private String secret;
     private String nodeType;
     private String commType;
-    private boolean isEnabled;
+    private Boolean isEnabled;
     private Timestamp createAt;
     private Timestamp updateAt;
     private String remark;
