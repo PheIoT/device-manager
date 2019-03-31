@@ -43,7 +43,7 @@ CREATE TABLE `t_device`
 DROP TABLE IF EXISTS `t_product`;
 CREATE TABLE `t_product`
 (
-  `id`          bigint NOT NULL AUTO_INCREMENT,
+`id`          bigint NOT NULL AUTO_INCREMENT,
   `pkey`        varchar(255) DEFAULT NULL,
   `displayName` varchar(255) DEFAULT NULL,
   `secret`      varchar(255) DEFAULT NULL,
