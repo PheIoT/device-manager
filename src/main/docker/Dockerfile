@@ -2,9 +2,9 @@ FROM fabric8/java-alpine-openjdk8-jdk
 
 VOLUME /tmp
 
-ENV VERSION= 1.0.0-SNAPSHOT
+ENV VERSION=1.0.0-SNAPSHOT
 
-ADD product-manager-$VERSION.jar app.jar
+ADD phecloud-pd-manager-$VERSION.jar app.jar
 
 RUN /sbin/ip route|awk '/default/ { print  $3,"\tdockerhost" }' >> /etc/hosts
 
@@ -19,5 +19,7 @@ ADD application.properties /application.properties
 RUN sh -c 'touch /application.properties'
 
 EXPOSE 8088
+
+ENV DBURL=""
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
