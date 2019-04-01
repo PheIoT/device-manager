@@ -44,7 +44,7 @@ public class ProductFacadeTest {
         ProductVO request = new ProductVO();
         request.setProduct_name("apiTest");
         request.setNode_type("device");
-        request.setUser_key("user-key-1");
+        request.setUid("user-key-1");
 
         String jsonString = JsonMapper.defaultMapper().toJson(request);
         MvcResult mvcResult = mockMvc

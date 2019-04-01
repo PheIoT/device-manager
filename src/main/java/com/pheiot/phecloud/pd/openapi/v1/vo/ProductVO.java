@@ -24,7 +24,7 @@ public class ProductVO extends AbstractValueObject {
     //类型 wifi / G345 / BLE
     private String comm_type;
     //用户key
-    private String user_key;
+    private String uid;
     //备注
     private String remark;
     //创建时间
@@ -58,7 +58,7 @@ public class ProductVO extends AbstractValueObject {
         vo.setProduct_secret(dto.getSecret());
         vo.setNode_type(dto.getNodeType());
         vo.setComm_type(dto.getCommType());
-        vo.setUser_key(dto.getUkey());
+        vo.setUid(dto.getUkey());
         vo.setRemark(dto.getRemark());
         vo.setCreated_at(dto.getCreateAt().toString());
         vo.setIs_enabled(dto.getIsEnabled());
@@ -70,7 +70,7 @@ public class ProductVO extends AbstractValueObject {
         dto.setSecret(vo.getProduct_secret());
         dto.setNodeType(vo.getProduct_key());
         dto.setCommType(vo.getComm_type());
-        dto.setUkey(vo.getUser_key());
+        dto.setUkey(vo.getUid());
         dto.setRemark(vo.getRemark());
 
 

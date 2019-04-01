@@ -8,12 +8,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pheiot.bamboo.common.utils.mapper.BeanMapper;
 import com.pheiot.phecloud.pd.dao.DeviceDao;
+import com.pheiot.phecloud.pd.dao.ProductDao;
 import com.pheiot.phecloud.pd.dto.DeviceDto;
 import com.pheiot.phecloud.pd.entity.Device;
+import com.pheiot.phecloud.pd.entity.Product;
 import com.pheiot.phecloud.pd.service.DeviceService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import com.pheiot.phecloud.pd.utils.ExceptionCode;
 import com.pheiot.phecloud.pd.utils.KeyGenerator;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     protected DeviceDao deviceDao;
 
+    protected ProductDao productDao;
 
     @Override
     public DeviceDto findByKey(String key) {
@@ -56,14 +60,21 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public DeviceDto binding(DeviceDto deviceDto) {
-        if (deviceDto == null) {
+        if (deviceDto == null || StringUtils.isBlank(deviceDto.getPkey())) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        Device device = BeanMapper.map(deviceDto, Device.class);
+        Product product = productDao.findByPkey(deviceDto.getPkey());
 
+        if (product == null) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
+        }
+
+        Device device = BeanMapper.map(deviceDto, Device.class);
         device.setDkey(KeyGenerator.generateKey());
         device.setSecret(KeyGenerator.generateSecret());
+        String tokenSeed = product.getPkey() + product.getSecret() + device.getDisplayName();
+        device.setToken(DigestUtils.md5Hex(tokenSeed));
 
         deviceDao.save(device);
 
@@ -140,6 +151,9 @@ public class DeviceServiceImpl implements DeviceService {
 
         logger.info("Delete device done.");
         return res;
+    }
 
+    private String generateToken(String seed) {
+        return DigestUtils.md5Hex(seed);
     }
 }

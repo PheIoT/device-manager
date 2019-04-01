@@ -26,6 +26,8 @@ public class DeviceDto extends AbstractValueObject {
 
     private String pkey;
     private String nodeType;
+
+    private String token;
     private Timestamp createAt;
     private Timestamp updateAt;
 }

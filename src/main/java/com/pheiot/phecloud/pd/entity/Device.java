@@ -31,7 +31,7 @@ public class Device extends BaseEntity {
     @Column(columnDefinition = " varchar(32) COMMENT '设备key'")
     private String dkey;
 
-    @Column(columnDefinition = " varchar(255) COMMENT '设备显示名称' ")
+    @Column(columnDefinition = " varchar(255) COMMENT '设备显示名称'")
     private String displayName;
 
     @Column(columnDefinition = " varchar(32) COMMENT '设备编码，例如MAC地址或者SN等'")
@@ -46,11 +46,14 @@ public class Device extends BaseEntity {
     @Column(columnDefinition = " bit COMMENT '设备启用状态'")
     private Boolean isEnabled;
 
-    @Column(columnDefinition = " varchar(255) COMMENT '备注")
+    @Column(columnDefinition = " varchar(255) COMMENT '备注'")
     private String remark;
 
-    @Column(columnDefinition = " varchar(32) COMMENT '所属产品Key' ")
+    @Column(columnDefinition = " varchar(32) COMMENT '所属产品Key'")
     private String pkey;
+
+    @Column(columnDefinition = " varchar(255) COMMENT '设备校验码'")
+    private String token;
 
     @CreationTimestamp
     @Column(columnDefinition = " datetime COMMENT '创建时间' ", nullable = false, updatable = false)

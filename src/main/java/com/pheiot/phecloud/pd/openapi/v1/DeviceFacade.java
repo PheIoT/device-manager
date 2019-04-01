@@ -110,7 +110,7 @@ public class DeviceFacade {
         }
 
         Map response = Maps.newHashMap();
-        response.put("dev_key", deviceVO.getDev_key());
+        response.put("dev_key", deviceVO.getDevice_key());
         response.put("dev_name", deviceVO.getRemark());
         response.put("is_enabled", deviceVO.getIs_enabled());
 

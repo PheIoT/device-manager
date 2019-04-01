@@ -26,16 +26,16 @@ CREATE TABLE `t_device`
   `secret`      varchar(32)  DEFAULT NULL,
   `displayName` varchar(255) DEFAULT NULL,
   `dsn`         varchar(255) DEFAULT NULL,
-  `isOnline`    bit  DEFAULT 0,
-  `isEnabled`   bit  DEFAULT 0,
+  `isOnline`    bit          DEFAULT 0,
+  `isEnabled`   bit          DEFAULT 0,
   `remark`      varchar(255) DEFAULT NULL,
   `createAt`    datetime     DEFAULT NULL,
   `updateAt`    datetime     DEFAULT NULL,
   `pkey`        varchar(32)  DEFAULT NULL,
+  `token`       varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
-
 
 -- ----------------------------
 -- Table structure for t_product
@@ -43,13 +43,13 @@ CREATE TABLE `t_device`
 DROP TABLE IF EXISTS `t_product`;
 CREATE TABLE `t_product`
 (
-`id`          bigint NOT NULL AUTO_INCREMENT,
+  `id`          bigint NOT NULL AUTO_INCREMENT,
   `pkey`        varchar(255) DEFAULT NULL,
   `displayName` varchar(255) DEFAULT NULL,
   `secret`      varchar(255) DEFAULT NULL,
   `nodeType`    varchar(255) DEFAULT NULL,
   `commType`    varchar(255) DEFAULT NULL,
-  `isEnabled`   bit  DEFAULT 0,
+  `isEnabled`   bit          DEFAULT 0,
   `createAt`    datetime     DEFAULT NULL,
   `updateAt`    datetime     DEFAULT NULL,
   `remark`      varchar(255) DEFAULT NULL,

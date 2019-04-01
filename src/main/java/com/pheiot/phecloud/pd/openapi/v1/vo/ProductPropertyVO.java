@@ -14,8 +14,8 @@ import java.util.List;
 
 @Data
 public class ProductPropertyVO extends AbstractValueObject {
-    private String prod_key;
-    private String prod_name;
+    private String product_key;
+    private String product_name;
     private List<ProductPropertyAttrVO> attr;
 
     public static void dto2Vo(ProductPropertyFullDto dto, ProductPropertyVO vo) {
@@ -39,8 +39,8 @@ public class ProductPropertyVO extends AbstractValueObject {
     }
 
     private static void convert2Vo(ProductPropertyFullDto dto, ProductPropertyVO vo) {
-        vo.setProd_name(dto.getPDisplayName());
-        vo.setProd_key(dto.getPkey());
+        vo.setProduct_key(dto.getPkey());
+        vo.setProduct_name(dto.getPDisplayName());
         List<ProductPropertyAttrVO> itemList = Lists.newArrayList();
         for (ProductPropertyDto d : dto.getAttr()) {
             itemList.add(ProductPropertyAttrVO.dto2Vo(d));
@@ -49,8 +49,8 @@ public class ProductPropertyVO extends AbstractValueObject {
     }
 
     private static void convert2Dto(ProductPropertyVO vo, ProductPropertyFullDto dto) {
-        dto.setPkey(vo.getProd_key());
-        dto.setPDisplayName(vo.getProd_name());
+        dto.setPkey(vo.getProduct_key());
+        dto.setPDisplayName(vo.getProduct_name());
 
         List<ProductPropertyDto> itemList = Lists.newArrayList();
         for (ProductPropertyAttrVO v : vo.getAttr()) {
