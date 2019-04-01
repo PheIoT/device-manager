@@ -56,7 +56,7 @@ public interface ProductService {
      * @param isEnabled isEnabled
      */
     @Transactional(rollbackFor = Exception.class)
-    void changeEnabledTo(String key, boolean isEnabled);
+    ProductDto changeEnabledTo(String key, boolean isEnabled);
 
 
     /**

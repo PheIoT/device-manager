@@ -87,7 +87,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void changeEnabledTo(String key, boolean isEnabled) {
+    public ProductDto changeEnabledTo(String key, boolean isEnabled) {
         if (StringUtils.isBlank(key)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
@@ -102,7 +102,11 @@ public class ProductServiceImpl implements ProductService {
 
         productDao.save(product);
 
+        ProductDto dto = BeanMapper.map(product, ProductDto.class);
+
         logger.info("Change enabled to {} for product:{}", isEnabled, product.getDisplayName());
+
+        return dto;
     }
 
     @Override

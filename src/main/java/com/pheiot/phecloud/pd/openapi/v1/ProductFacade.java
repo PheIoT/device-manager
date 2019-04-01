@@ -4,12 +4,13 @@
 
 package com.pheiot.phecloud.pd.openapi.v1;
 
-import com.google.common.collect.Maps;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import com.pheiot.phecloud.pd.openapi.ResponseEntity;
+import com.pheiot.phecloud.pd.openapi.exception.BusinessException;
 import com.pheiot.phecloud.pd.openapi.v1.vo.ProductVO;
 import com.pheiot.phecloud.pd.service.ProductService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -49,19 +50,29 @@ public class ProductFacade {
     }
 
     @PatchMapping("/{key}/enabled")
-    public ResponseEntity<ProductDto> changeEnabledTo(@PathVariable("key") String productKey, @RequestParam("is_enabled") boolean isEnabled) {
+    public ResponseEntity<ProductDto> changeEnabledTo(@PathVariable("key") String productKey, @RequestBody Map body) {
+        ProductVO responseVo = new ProductVO();
+
         try {
-            productService.changeEnabledTo(productKey, isEnabled);
+            if (body == null || body.get("is_enabled") == null || StringUtils.isBlank(body.get("is_enabled").toString())) {
+                throw new BusinessException("Parameter error.");
+            }
+
+            ProductDto dto = productService.changeEnabledTo(productKey, Boolean.valueOf(body.get("is_enabled").toString()));
+            ProductVO.dto2Vo(dto, responseVo);
+        } catch (BusinessException ex) {
+            log.error("Updating product status error.{}", ex.getMessage());
+            return ResponseEntity.ofFailed().data("Updating product status error.");
         } catch (ApplicationException ex) {
             log.error("Updating product status error.{}", ex.getMessage());
             return ResponseEntity.ofFailed().data("Updating product status error.");
         }
 
-        Map response = Maps.newHashMap();
-        response.put("product_key", productKey);
-        response.put("is_enabled", isEnabled);
+//        Map response = Maps.newHashMap();
+//        response.put("product_key", productKey);
+//        response.put("is_enabled", isEnabled);
 
-        return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(response);
+        return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
     }
 
     @GetMapping("/{key}")
