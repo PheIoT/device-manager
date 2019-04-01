@@ -54,7 +54,7 @@ CREATE TABLE `t_product`
   `createAt`    datetime     DEFAULT NULL,
   `updateAt`    datetime     DEFAULT NULL,
   `remark`      varchar(255) DEFAULT NULL,
-  `ukey`        varchar(255) DEFAULT NULL,
+  `uid`        varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

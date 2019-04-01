@@ -5,6 +5,8 @@
 package com.pheiot.phecloud.pd.dao;
 
 import com.pheiot.phecloud.pd.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,10 +21,20 @@ public interface ProductDao extends PagingAndSortingRepository<Product, Long>, J
     /**
      * 查询用户所有的产品
      *
-     * @param ukey userKey
+     * @param uid userKey
      * @return
      */
-    List<Product> findByUkey(String ukey);
+    @Query(value = "SELECT p FROM Product p WHERE p.uid = ?1 and (?2 is null or p.isEnabled = ?2)")
+    List<Product> findByUid(String uid, Boolean isEnabled);
+
+    /**
+     * 查询用户所有的产品,提供翻页支持。
+     *
+     * @param uid userKey
+     * @return
+     */
+    @Query(value = "SELECT p FROM Product p WHERE p.uid = ?1 and (?2 is null or p.isEnabled = ?2)")
+    Page<Product> findByUidPageable(String uid, Boolean isEnabled, Pageable pageable);
 
     /**
      * 根据id查询产品

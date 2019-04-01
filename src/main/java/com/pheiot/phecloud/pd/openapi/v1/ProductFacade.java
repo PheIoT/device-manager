@@ -4,8 +4,11 @@
 
 package com.pheiot.phecloud.pd.openapi.v1;
 
+import com.google.common.collect.Lists;
+import com.pheiot.phecloud.pd.dto.ProductConditionDto;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import com.pheiot.phecloud.pd.openapi.ResponseEntity;
+import com.pheiot.phecloud.pd.openapi.ResponsePageEntity;
 import com.pheiot.phecloud.pd.openapi.exception.BusinessException;
 import com.pheiot.phecloud.pd.openapi.v1.vo.ProductVO;
 import com.pheiot.phecloud.pd.service.ProductService;
@@ -17,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,10 +72,6 @@ public class ProductFacade {
             return ResponseEntity.ofFailed().data("Updating product status error.");
         }
 
-//        Map response = Maps.newHashMap();
-//        response.put("product_key", productKey);
-//        response.put("is_enabled", isEnabled);
-
         return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
     }
 
@@ -89,6 +89,35 @@ public class ProductFacade {
 
 
         return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
+    }
+
+    @GetMapping
+    public ResponsePageEntity findAllProduct(@RequestParam(value="limit", required=false) Integer limit,
+                                                     @RequestParam(value="offset", required=false) Integer offset,
+                                                     @RequestParam(value="show_disabled", required=false) Boolean showDisabled,
+                                                     @RequestHeader("phe-application-user-token") String userToken) {
+
+        ProductConditionDto pageableDto = new ProductConditionDto();
+        pageableDto.setLimit(limit);
+        pageableDto.setOffset(offset);
+        pageableDto.setShowDisabled(showDisabled);
+
+        List<ProductVO> responseVoList = Lists.newArrayList();
+
+        try {
+            //TODO: userToken的提取和校验，传入service的应为uid
+
+            List<ProductDto> dtos = productService.findByUidPageable(userToken, pageableDto);
+            for (ProductDto dto : dtos) {
+                responseVoList.add(ProductVO.dto2Vo(dto));
+            }
+
+        } catch (ApplicationException ex) {
+            log.error("Find product error.{}", ex.getMessage());
+            return ResponsePageEntity.ofFailed().data("Find product status error.");
+        }
+
+        return ResponsePageEntity.ofSuccess().status(HttpStatus.OK).data(responseVoList).total(responseVoList.size());
     }
 
 }

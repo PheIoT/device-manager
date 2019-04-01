@@ -11,6 +11,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,5 +78,18 @@ public class ProductDaoTest {
         Optional<Product> currentProduct = productDao.findById(1L);
         Product targetProduct = productDao.findByDisplayName(currentProduct.get().getDisplayName());
         Assert.assertEquals(targetProduct, currentProduct);
+    }
+
+    /**
+     * 根据产品名称查询
+     */
+    @Test
+    public void findByPageable() {
+        Sort sort = new Sort(Sort.Direction.DESC, "createAt");
+        Pageable page = PageRequest.of(0, 2000, sort);
+
+        Page<Product> productPage = productDao.findByUidPageable("user-12345678901234567890abcdgef", null, page);
+        List<Product> list = productPage.getContent();
+        Assert.assertEquals(list.size(), 1);
     }
 }

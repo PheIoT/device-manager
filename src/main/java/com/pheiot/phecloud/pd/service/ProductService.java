@@ -4,6 +4,7 @@
 
 package com.pheiot.phecloud.pd.service;
 
+import com.pheiot.phecloud.pd.dto.ProductConditionDto;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +28,21 @@ public interface ProductService {
      */
     ProductDto findProductByKey(String key);
 
+
     /**
-     * 查询所有产品
+     * 根据用户uid，查询所有产品
      *
      * @return List
      */
-    List<ProductDto> findProductByUserKey(String userKey);
+    List<ProductDto> findProductByUid(String uid);
+
+    /**
+     * 查询用户所有的产品,提供翻页支持。
+     *
+     * @param uid userKey
+     * @return
+     */
+    List<ProductDto> findByUidPageable(String uid, ProductConditionDto pageable);
 
     /**
      * 增加产品

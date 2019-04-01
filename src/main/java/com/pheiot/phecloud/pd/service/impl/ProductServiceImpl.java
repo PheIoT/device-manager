@@ -7,16 +7,21 @@ package com.pheiot.phecloud.pd.service.impl;
 import com.google.common.collect.Lists;
 import com.pheiot.bamboo.common.utils.mapper.BeanMapper;
 import com.pheiot.phecloud.pd.dao.ProductDao;
+import com.pheiot.phecloud.pd.dto.ProductConditionDto;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import com.pheiot.phecloud.pd.entity.Product;
 import com.pheiot.phecloud.pd.service.ProductService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import com.pheiot.phecloud.pd.utils.ExceptionCode;
 import com.pheiot.phecloud.pd.utils.KeyGenerator;
+import com.pheiot.phecloud.pd.utils.OffsetBasedPageRequest;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,12 +132,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findProductByUserKey(String userKey) {
-        if (StringUtils.isBlank(userKey)) {
+    public List<ProductDto> findProductByUid(String uid) {
+        if (StringUtils.isBlank(uid)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        List<Product> list = productDao.findByUkey(userKey);
+        List<Product> list = productDao.findByUid(uid, null);
 
         List<ProductDto> dtoList = Lists.newArrayList();
 
@@ -141,6 +146,30 @@ public class ProductServiceImpl implements ProductService {
             dtoList.add(dto);
         }
 
+        return dtoList;
+    }
+
+    @Override
+    public List<ProductDto> findByUidPageable(String uid, ProductConditionDto pageableDto) {
+        if (StringUtils.isBlank(uid)) {
+            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
+        }
+
+        Sort sort = new Sort(Sort.Direction.DESC, "createAt");
+        Boolean showDisabled = pageableDto.getShowDisabled() ? null : true;
+
+        Pageable page = new OffsetBasedPageRequest(pageableDto.getOffset(), pageableDto.getLimit(), sort);
+
+        List<ProductDto> dtoList = Lists.newArrayList();
+
+        if (page != null) {
+            Page<Product> list = productDao.findByUidPageable(uid, showDisabled, page);
+            List<Product> entityList = list.getContent();
+            for (Product entity : entityList) {
+                ProductDto dto = BeanMapper.map(entity, ProductDto.class);
+                dtoList.add(dto);
+            }
+        }
         return dtoList;
     }
 

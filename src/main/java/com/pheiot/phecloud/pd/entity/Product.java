@@ -53,6 +53,6 @@ public class Product extends BaseEntity {
     @Column(columnDefinition = "varchar(255) COMMENT '产品描述'")
     private String remark;
 
-    @Column(columnDefinition = "varchar(32) COMMENT '用户key'")
-    private String ukey;
+    @Column(columnDefinition = "varchar(32) COMMENT '用户id'")
+    private String uid;
 }
