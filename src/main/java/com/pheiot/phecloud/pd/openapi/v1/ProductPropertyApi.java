@@ -28,9 +28,9 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/api/v1/property")
-public class ProductPropertyFacade {
+public class ProductPropertyApi {
 
-    private static Logger log = LoggerFactory.getLogger(ProductPropertyFacade.class);
+    private static Logger log = LoggerFactory.getLogger(ProductPropertyApi.class);
 
     @Resource
     private ProductPropertyService productPropertyService;

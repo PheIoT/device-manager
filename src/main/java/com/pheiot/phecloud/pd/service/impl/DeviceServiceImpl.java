@@ -14,6 +14,7 @@ import com.pheiot.phecloud.pd.dto.DeviceDto;
 import com.pheiot.phecloud.pd.entity.Device;
 import com.pheiot.phecloud.pd.entity.Product;
 import com.pheiot.phecloud.pd.service.DeviceService;
+import com.pheiot.phecloud.pd.service.ApiDeviceService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import com.pheiot.phecloud.pd.utils.ExceptionCode;
 import com.pheiot.phecloud.pd.utils.KeyGenerator;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class DeviceServiceImpl implements DeviceService {
+public class DeviceServiceImpl implements DeviceService, ApiDeviceService {
 
     private static Logger logger = LoggerFactory.getLogger(DeviceService.class);
 
@@ -42,6 +43,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     protected ProductDao productDao;
 
+    //以下为DeviceService方法
     @Override
     public DeviceDto findByKey(String key) {
         if (StringUtils.isBlank(key)) {
@@ -60,7 +62,6 @@ public class DeviceServiceImpl implements DeviceService {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
         }
 
-
         DeviceDto dto = BeanMapper.map(device, DeviceDto.class);
         dto.setNodeType(product.getNodeType());
 
@@ -68,10 +69,39 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public DeviceDto findByProductKey(String pkey) {
-        return null;
+    public Map<String, List<String>> unbinding(String productKey, List<String> dkeys) {
+        if (dkeys == null || dkeys.isEmpty() || StringUtils.isBlank(productKey)) {
+            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
+        }
+
+        List<String> success = Lists.newArrayList();
+        List<String> failed = Lists.newArrayList();
+        for (String key : dkeys) {
+            Device entity = deviceDao.findByPkeyAndDkey(productKey, key);
+            if (entity == null) {
+                failed.add(key);
+                continue;
+            }
+            try {
+                deviceDao.deleteByDkey(key);
+                success.add(key);
+                logger.debug("Delete device success: {}", key);
+            } catch (Exception ex) {
+                failed.add(key);
+                ex.printStackTrace();
+                logger.debug("Delete device failed: {}", key);
+            }
+        }
+
+        Map<String, List<String>> res = Maps.newHashMap();
+        res.put("success", success);
+        res.put("failed", failed);
+
+        logger.info("Delete device done.");
+        return res;
     }
 
+    //以下为API方法
     @Override
     public List<DeviceDto> findByProductKeyPageable(String uid, String pkey, DeviceConditionDto conditionDto) {
         if (StringUtils.isBlank(uid) || StringUtils.isBlank(pkey)) {
@@ -98,6 +128,30 @@ public class DeviceServiceImpl implements DeviceService {
             }
         }
         return dtoList;
+    }
+
+    @Override
+    public DeviceDto findByProductKeyAndDeviceKey(String uid, String deviceKey) {
+        if (StringUtils.isBlank(uid) || StringUtils.isBlank(deviceKey)) {
+            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
+        }
+
+        Device device = deviceDao.findByDkey(deviceKey);
+
+        if (device == null || StringUtils.isBlank(device.getPkey())) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
+        }
+
+        Product product = productDao.findByPkey(device.getPkey());
+
+        if (product == null || StringUtils.isBlank(product.getUid()) || !product.getUid().equals(uid)) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
+        }
+
+        DeviceDto dto = BeanMapper.map(device, DeviceDto.class);
+        dto.setNodeType(product.getNodeType());
+
+        return dto;
     }
 
     @Override
@@ -131,6 +185,7 @@ public class DeviceServiceImpl implements DeviceService {
         return dto;
     }
 
+
     @Override
     public DeviceDto update(String uid, DeviceDto deviceDto) {
         if (deviceDto == null || StringUtils.isBlank(deviceDto.getDkey())) {
@@ -144,15 +199,14 @@ public class DeviceServiceImpl implements DeviceService {
         }
 
         boolean existProduct = productDao.existsProductByUidAndPkey(uid, device.getPkey());
-
         if (existProduct == false) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
         }
 
-        if(StringUtils.isNotBlank(deviceDto.getDisplayName())){
+        if (StringUtils.isNotBlank(deviceDto.getDisplayName())) {
             device.setDisplayName(deviceDto.getDisplayName());
         }
-        if(StringUtils.isNotBlank(deviceDto.getRemark())){
+        if (StringUtils.isNotBlank(deviceDto.getRemark())) {
             device.setRemark(deviceDto.getRemark());
         }
 
@@ -176,7 +230,7 @@ public class DeviceServiceImpl implements DeviceService {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
         }
 
-        boolean existProduct = productDao.existsProductByUidAndPkey(uid,device.getPkey());
+        boolean existProduct = productDao.existsProductByUidAndPkey(uid, device.getPkey());
         if (existProduct == false) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
         }
@@ -191,35 +245,16 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public Map<String, List<String>> unbinding(String productKey, List<String> keys) {
-        if (keys == null || keys.isEmpty() || StringUtils.isBlank(productKey)) {
+    public Map<String, List<String>> unbinding(String uid, String productKey, List<String> dkeys) {
+        if (dkeys == null || dkeys.isEmpty() || StringUtils.isBlank(productKey)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        List<String> success = Lists.newArrayList();
-        List<String> failed = Lists.newArrayList();
-        for (String key : keys) {
-            Device entity = deviceDao.findByPkeyAndDkey(productKey, key);
-            if (entity == null) {
-                failed.add(key);
-                continue;
-            }
-            try {
-                deviceDao.deleteByDkey(key);
-                success.add(key);
-                logger.debug("Delete device success: {}", key);
-            } catch (Exception ex) {
-                failed.add(key);
-                ex.printStackTrace();
-                logger.debug("Delete device failed: {}", key);
-            }
+        boolean existProduct = productDao.existsProductByUidAndPkey(uid, productKey);
+        if (existProduct == false) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
         }
-
-        Map<String, List<String>> res = Maps.newHashMap();
-        res.put("success", success);
-        res.put("failed", failed);
-
-        logger.info("Delete device done.");
-        return res;
+        return unbinding(productKey, dkeys);
     }
+
 }

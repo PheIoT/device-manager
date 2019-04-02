@@ -4,7 +4,6 @@
 
 package com.pheiot.phecloud.pd.service;
 
-import com.pheiot.phecloud.pd.dto.ProductConditionDto;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,13 +36,6 @@ public interface ProductService {
      */
     List<ProductDto> findProductByUid(String uid);
 
-    /**
-     * 查询用户所有的产品,提供翻页支持。
-     *
-     * @param uid userKey
-     * @return
-     */
-    List<ProductDto> findByUidPageable(String uid, ProductConditionDto pageable);
 
     /**
      * 增加产品
@@ -62,13 +54,6 @@ public interface ProductService {
     @Modifying
     void update(ProductDto productDto);
 
-    /**
-     * 修改产品
-     *
-     * @param isEnabled isEnabled
-     */
-    @Transactional(rollbackFor = Exception.class)
-    ProductDto changeEnabledTo(String key, boolean isEnabled);
 
 
     /**

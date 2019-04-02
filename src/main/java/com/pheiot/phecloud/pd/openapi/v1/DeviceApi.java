@@ -13,7 +13,7 @@ import com.pheiot.phecloud.pd.openapi.ResponsePageEntity;
 import com.pheiot.phecloud.pd.openapi.SecurityPolice;
 import com.pheiot.phecloud.pd.openapi.exception.BusinessException;
 import com.pheiot.phecloud.pd.openapi.v1.vo.DeviceVO;
-import com.pheiot.phecloud.pd.service.DeviceService;
+import com.pheiot.phecloud.pd.service.ApiDeviceService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -30,12 +30,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/device")
-public class DeviceFacade {
+public class DeviceApi {
 
-    private static Logger log = LoggerFactory.getLogger(DeviceFacade.class);
+    private static Logger log = LoggerFactory.getLogger(DeviceApi.class);
 
     @Resource
-    private DeviceService deviceService;
+    private ApiDeviceService deviceService;
 
     @PostMapping("/binding")
     public ResponseEntity binding(@RequestBody DeviceVO deviceVO,
@@ -69,7 +69,7 @@ public class DeviceFacade {
         List<String> deviceKeys = (List<String>) vo.get("devices");
         Map<String, List<String>> req;
         try {
-            req = deviceService.unbinding(productKey, deviceKeys);
+            req = deviceService.unbinding(userToken, productKey, deviceKeys);
         } catch (ApplicationException ex) {
             log.error("Binding device error.{}", ex.getMessage());
             return ResponseEntity.ofFailed().data("Binding device error.");
@@ -104,13 +104,13 @@ public class DeviceFacade {
     }
 
     @GetMapping("/{key}")
-    public ResponseEntity findProductByKey(@PathVariable("key") String key,
+    public ResponseEntity findDeviceByKey(@PathVariable("key") String deviceKey,
                                            @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
         SecurityPolice.checkUserToken(userToken);
 
         DeviceVO responseVo = new DeviceVO();
         try {
-            DeviceDto dto = deviceService.findByKey(key);
+            DeviceDto dto = deviceService.findByProductKeyAndDeviceKey(userToken, deviceKey);
             DeviceVO.dto2Vo(dto, responseVo);
         } catch (ApplicationException ex) {
             log.error("Find device error.{}", ex.getMessage());

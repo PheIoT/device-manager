@@ -11,6 +11,7 @@ import com.pheiot.phecloud.pd.dto.ProductConditionDto;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import com.pheiot.phecloud.pd.entity.Product;
 import com.pheiot.phecloud.pd.service.ProductService;
+import com.pheiot.phecloud.pd.service.ApiProductService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import com.pheiot.phecloud.pd.utils.ExceptionCode;
 import com.pheiot.phecloud.pd.utils.KeyGenerator;
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService, ApiProductService {
 
     private static Logger logger = LoggerFactory.getLogger(ProductService.class);
 
@@ -56,7 +57,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     public ProductDto save(ProductDto productDto) {
-        if (productDto == null) {
+        return save(productDto.getUid(), productDto);
+    }
+
+    @Transactional
+    public ProductDto save(String uid, ProductDto productDto) {
+        if (productDto == null || StringUtils.isBlank(productDto.getUid())) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
@@ -67,11 +73,10 @@ public class ProductServiceImpl implements ProductService {
         productDao.save(product);
 
         ProductDto dto = BeanMapper.map(product, ProductDto.class);
-        logger.info("Save product:{}", productDto.getDisplayName());
+        logger.info("Save product: {}", productDto.getDisplayName());
 
         return dto;
     }
-
 
     @Override
     public void update(ProductDto productDto) {
@@ -92,12 +97,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto changeEnabledTo(String key, boolean isEnabled) {
-        if (StringUtils.isBlank(key)) {
+    public ProductDto changeEnabledTo(String uid, String productKey, boolean isEnabled) {
+        if (StringUtils.isBlank(uid) || StringUtils.isBlank(productKey)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        Product product = productDao.findByPkey(key);
+        Product product = productDao.findByUidAndPkey(uid, productKey);
 
         if (product == null) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
@@ -147,6 +152,23 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return dtoList;
+    }
+
+    @Override
+    public ProductDto findProductByUidAndProductKey(String uid, String key) {
+        if (StringUtils.isBlank(uid) || StringUtils.isBlank(key)) {
+            throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
+        }
+
+        Product product = productDao.findByUidAndPkey(uid, key);
+
+        if (product == null) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
+        }
+
+        ProductDto dto = BeanMapper.map(product, ProductDto.class);
+
+        return dto;
     }
 
     @Override

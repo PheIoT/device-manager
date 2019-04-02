@@ -20,5 +20,5 @@ public class ProductDto extends AbstractValueObject {
     private Timestamp createAt;
     private Timestamp updateAt;
     private String remark;
-    private String ukey;
+    private String uid;
 }

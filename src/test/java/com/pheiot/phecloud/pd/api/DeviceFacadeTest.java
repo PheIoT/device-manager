@@ -7,7 +7,7 @@ package com.pheiot.phecloud.pd.api;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pheiot.bamboo.common.utils.mapper.JsonMapper;
-import com.pheiot.phecloud.pd.openapi.v1.DeviceFacade;
+import com.pheiot.phecloud.pd.openapi.v1.DeviceApi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class DeviceFacadeTest {
 
     @Autowired
-    private DeviceFacade facade;
+    private DeviceApi facade;
 
     private MockMvc mockMvc;
 

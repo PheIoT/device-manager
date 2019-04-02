@@ -9,9 +9,10 @@ import com.pheiot.phecloud.pd.dto.ProductConditionDto;
 import com.pheiot.phecloud.pd.dto.ProductDto;
 import com.pheiot.phecloud.pd.openapi.ResponseEntity;
 import com.pheiot.phecloud.pd.openapi.ResponsePageEntity;
+import com.pheiot.phecloud.pd.openapi.SecurityPolice;
 import com.pheiot.phecloud.pd.openapi.exception.BusinessException;
 import com.pheiot.phecloud.pd.openapi.v1.vo.ProductVO;
-import com.pheiot.phecloud.pd.service.ProductService;
+import com.pheiot.phecloud.pd.service.ApiProductService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,23 +29,26 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/product")
-public class ProductFacade {
+public class ProductApi {
 
-    private static Logger log = LoggerFactory.getLogger(ProductFacade.class);
+    private static Logger log = LoggerFactory.getLogger(ProductApi.class);
 
     @Resource
-    private ProductService productService;
+    private ApiProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductVO productVO) {
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductVO productVO,
+                                                    @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
+
+        SecurityPolice.checkUserToken(userToken);
+
         ProductDto dto = ProductVO.vo2Dto(productVO);
+        dto.setUid(userToken);
 
-        ProductDto responseDto;
-        ProductVO responseVo = new ProductVO();
-
+        ProductVO responseVo;
         try {
-            responseDto = productService.save(dto);
-            ProductVO.dto2Vo(responseDto, responseVo);
+            ProductDto productDto = productService.save(userToken, dto);
+            responseVo = ProductVO.dto2Vo(productDto);
         } catch (ApplicationException ex) {
             log.error("Save product error.{}", ex.getMessage());
             return ResponseEntity.ofFailed().data("Save product error.");
@@ -54,7 +58,11 @@ public class ProductFacade {
     }
 
     @PatchMapping("/{key}/enabled")
-    public ResponseEntity<ProductDto> changeEnabledTo(@PathVariable("key") String productKey, @RequestBody Map body) {
+    public ResponseEntity<ProductDto> changeEnabledTo(@PathVariable("key") String productKey,
+                                                      @RequestBody Map body,
+                                                      @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
+        SecurityPolice.checkUserToken(userToken);
+
         ProductVO responseVo = new ProductVO();
 
         try {
@@ -62,7 +70,7 @@ public class ProductFacade {
                 throw new BusinessException("Parameter error.");
             }
 
-            ProductDto dto = productService.changeEnabledTo(productKey, Boolean.valueOf(body.get("is_enabled").toString()));
+            ProductDto dto = productService.changeEnabledTo(userToken, productKey, Boolean.valueOf(body.get("is_enabled").toString()));
             ProductVO.dto2Vo(dto, responseVo);
         } catch (BusinessException ex) {
             log.error("Updating product status error.{}", ex.getMessage());
@@ -76,27 +84,29 @@ public class ProductFacade {
     }
 
     @GetMapping("/{key}")
-    public ResponseEntity<ProductDto> findProductByKey(@PathVariable("key") String productKey) {
+    public ResponseEntity<ProductDto> findProductByKey(@PathVariable("key") String productKey,
+                                                       @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
+        SecurityPolice.checkUserToken(userToken);
         ProductVO responseVo = new ProductVO();
 
         try {
-            ProductDto dto = productService.findProductByKey(productKey);
+            ProductDto dto = productService.findProductByUidAndProductKey(userToken, productKey);
             ProductVO.dto2Vo(dto, responseVo);
         } catch (ApplicationException ex) {
             log.error("Find product error.{}", ex.getMessage());
             return ResponseEntity.ofFailed().data("Find product status error.");
         }
 
-
         return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
     }
 
     @GetMapping
-    public ResponsePageEntity findAllProduct(@RequestParam(value="limit", required=false) Integer limit,
-                                                     @RequestParam(value="offset", required=false) Integer offset,
-                                                     @RequestParam(value="show_disabled", required=false) Boolean showDisabled,
-                                                     @RequestHeader("phe-application-user-token") String userToken) {
+    public ResponsePageEntity findAllProduct(@RequestParam(value = "limit", required = false) Integer limit,
+                                             @RequestParam(value = "offset", required = false) Integer offset,
+                                             @RequestParam(value = "show_disabled", required = false) Boolean showDisabled,
+                                             @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
 
+        SecurityPolice.checkUserToken(userToken);
         ProductConditionDto pageableDto = new ProductConditionDto();
         pageableDto.setLimit(limit);
         pageableDto.setOffset(offset);

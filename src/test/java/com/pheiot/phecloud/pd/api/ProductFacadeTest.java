@@ -5,7 +5,7 @@
 package com.pheiot.phecloud.pd.api;
 
 import com.pheiot.bamboo.common.utils.mapper.JsonMapper;
-import com.pheiot.phecloud.pd.openapi.v1.ProductFacade;
+import com.pheiot.phecloud.pd.openapi.v1.ProductApi;
 import com.pheiot.phecloud.pd.openapi.v1.vo.ProductVO;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class ProductFacadeTest {
 
     @Autowired
-    private ProductFacade productFacade;
+    private ProductApi productFacade;
 
     private MockMvc mockMvc;
 
