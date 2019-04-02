@@ -61,7 +61,7 @@ public interface DeviceService {
      * @param isEnabled isEnabled
      */
     @Transactional(rollbackFor = Exception.class)
-    void changeEnabledTo(String dkey, boolean isEnabled);
+    DeviceDto changeEnabledTo(String uid, String dkey, boolean isEnabled);
 
 
     /**

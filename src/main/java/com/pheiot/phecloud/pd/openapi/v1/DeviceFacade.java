@@ -11,9 +11,11 @@ import com.pheiot.phecloud.pd.dto.DeviceDto;
 import com.pheiot.phecloud.pd.openapi.ResponseEntity;
 import com.pheiot.phecloud.pd.openapi.ResponsePageEntity;
 import com.pheiot.phecloud.pd.openapi.SecurityPolice;
+import com.pheiot.phecloud.pd.openapi.exception.BusinessException;
 import com.pheiot.phecloud.pd.openapi.v1.vo.DeviceVO;
 import com.pheiot.phecloud.pd.service.DeviceService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -77,22 +79,26 @@ public class DeviceFacade {
     }
 
     @PatchMapping("/{key}/enabled")
-    public ResponseEntity changeEnabledTo(@PathVariable("key") String key,
-                                          @RequestParam("is_enabled") boolean isEnabled,
+    public ResponseEntity changeEnabledTo(@PathVariable("key") String deviceKey,
+                                          @RequestBody Map body,
                                           @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken
     ) {
         SecurityPolice.checkUserToken(userToken);
 
+        DeviceDto dto;
         try {
-            deviceService.changeEnabledTo(key, isEnabled);
+            if (body == null || body.get("is_enabled") == null || StringUtils.isBlank(body.get("is_enabled").toString())) {
+                throw new BusinessException("Parameter error.");
+            }
+            dto = deviceService.changeEnabledTo(userToken, deviceKey, Boolean.valueOf(body.get("is_enabled").toString()));
         } catch (ApplicationException ex) {
             log.error("Updating device status error.{}", ex.getMessage());
             return ResponseEntity.ofFailed().data("Updating device status error.");
         }
 
         Map response = Maps.newHashMap();
-        response.put("dev_key", key);
-        response.put("is_enabled", isEnabled);
+        response.put("device_key", dto.getDkey());
+        response.put("is_enabled", dto.getIsEnabled());
 
         return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(response);
     }

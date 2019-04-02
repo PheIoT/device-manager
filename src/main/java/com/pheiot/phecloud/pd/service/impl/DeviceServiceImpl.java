@@ -165,21 +165,29 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public void changeEnabledTo(String key, boolean isEnabled) {
-        if (StringUtils.isBlank(key)) {
+    public DeviceDto changeEnabledTo(String uid, String deviceKey, boolean isEnabled) {
+        if (StringUtils.isBlank(deviceKey) || StringUtils.isBlank(uid)) {
             throw new ApplicationException(ExceptionCode.PARAMTER_ERROR);
         }
 
-        Device device = deviceDao.findByDkey(key);
+        Device device = deviceDao.findByDkey(deviceKey);
 
         if (device == null) {
+            throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
+        }
+
+        boolean existProduct = productDao.existsProductByUidAndPkey(uid,device.getPkey());
+        if (existProduct == false) {
             throw new ApplicationException(ExceptionCode.OBJECT_NOT_FOUND);
         }
 
         device.setIsEnabled(isEnabled);
         deviceDao.save(device);
 
-        logger.info("Change enabled to {} for product:{}", isEnabled, device.getDisplayName());
+        DeviceDto dto = BeanMapper.map(device, DeviceDto.class);
+        logger.info("Change enabled to {} for device:{}", isEnabled, device.getDisplayName());
+
+        return dto;
     }
 
     @Override
@@ -213,9 +221,5 @@ public class DeviceServiceImpl implements DeviceService {
 
         logger.info("Delete device done.");
         return res;
-    }
-
-    private String generateToken(String seed) {
-        return DigestUtils.md5Hex(seed);
     }
 }
