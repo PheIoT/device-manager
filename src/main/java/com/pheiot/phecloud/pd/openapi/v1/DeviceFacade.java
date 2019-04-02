@@ -4,9 +4,13 @@
 
 package com.pheiot.phecloud.pd.openapi.v1;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.pheiot.phecloud.pd.dto.DeviceConditionDto;
 import com.pheiot.phecloud.pd.dto.DeviceDto;
 import com.pheiot.phecloud.pd.openapi.ResponseEntity;
+import com.pheiot.phecloud.pd.openapi.ResponsePageEntity;
+import com.pheiot.phecloud.pd.openapi.SecurityPolice;
 import com.pheiot.phecloud.pd.openapi.v1.vo.DeviceVO;
 import com.pheiot.phecloud.pd.service.DeviceService;
 import com.pheiot.phecloud.pd.utils.ApplicationException;
@@ -32,14 +36,18 @@ public class DeviceFacade {
     private DeviceService deviceService;
 
     @PostMapping("/binding")
-    public ResponseEntity binding(@RequestBody DeviceVO deviceVO) {
+    public ResponseEntity binding(@RequestBody DeviceVO deviceVO,
+                                  @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
+        SecurityPolice.checkUserToken(userToken);
+
         DeviceDto dto = DeviceVO.vo2Dto(deviceVO);
 
         DeviceDto responseDto;
         DeviceVO responseVo = new DeviceVO();
 
         try {
-            responseDto = deviceService.binding(dto);
+            //TODO: userToken的提取和校验，传入service的应为uid
+            responseDto = deviceService.binding(userToken, dto);
             DeviceVO.dto2Vo(responseDto, responseVo);
         } catch (ApplicationException ex) {
             log.error("Binding device error.{}", ex.getMessage());
@@ -50,7 +58,11 @@ public class DeviceFacade {
     }
 
     @PostMapping("/unbinding")
-    public ResponseEntity unbinding(@RequestBody Map vo) {
+    public ResponseEntity unbinding(@RequestBody Map vo,
+                                    @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
+
+        SecurityPolice.checkUserToken(userToken);
+
         String productKey = vo.get("product_key").toString();
         List<String> deviceKeys = (List<String>) vo.get("devices");
         Map<String, List<String>> req;
@@ -65,7 +77,12 @@ public class DeviceFacade {
     }
 
     @PatchMapping("/{key}/enabled")
-    public ResponseEntity changeEnabledTo(@PathVariable("key") String key, @RequestParam("is_enabled") boolean isEnabled) {
+    public ResponseEntity changeEnabledTo(@PathVariable("key") String key,
+                                          @RequestParam("is_enabled") boolean isEnabled,
+                                          @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken
+    ) {
+        SecurityPolice.checkUserToken(userToken);
+
         try {
             deviceService.changeEnabledTo(key, isEnabled);
         } catch (ApplicationException ex) {
@@ -81,9 +98,11 @@ public class DeviceFacade {
     }
 
     @GetMapping("/{key}")
-    public ResponseEntity findProductByKey(@PathVariable("key") String key) {
-        DeviceVO responseVo = new DeviceVO();
+    public ResponseEntity findProductByKey(@PathVariable("key") String key,
+                                           @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
+        SecurityPolice.checkUserToken(userToken);
 
+        DeviceVO responseVo = new DeviceVO();
         try {
             DeviceDto dto = deviceService.findByKey(key);
             DeviceVO.dto2Vo(dto, responseVo);
@@ -92,29 +111,63 @@ public class DeviceFacade {
             return ResponseEntity.ofFailed().data("Find device status error.");
         }
 
-
         return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
     }
 
     @PutMapping("/{key}")
-    public ResponseEntity update(@RequestBody DeviceVO deviceVO) {
-        DeviceVO responseVo = new DeviceVO();
-        DeviceVO.vo2Dto(deviceVO);
-
+    public ResponseEntity update(
+            @PathVariable("key") String deviceKey,
+            @RequestBody DeviceVO deviceVO,
+            @RequestHeader(SecurityPolice.HTTP_HEADER_USER_TOKEN) String userToken) {
+        SecurityPolice.checkUserToken(userToken);
+        DeviceDto resDto;
         try {
             DeviceDto dto = DeviceVO.vo2Dto(deviceVO);
-            deviceService.update(dto);
+            dto.setDkey(deviceKey);
+
+            //TODO: userToken的提取和校验，传入service的应为uid
+            resDto = deviceService.update(userToken, dto);
         } catch (ApplicationException ex) {
             log.error("Find device error.{}", ex.getMessage());
             return ResponseEntity.ofFailed().data("Find device status error.");
         }
 
         Map response = Maps.newHashMap();
-        response.put("dev_key", deviceVO.getDevice_key());
-        response.put("dev_name", deviceVO.getRemark());
-        response.put("is_enabled", deviceVO.getIs_enabled());
+        response.put("device_key", resDto.getDkey());
+        response.put("device_name", resDto.getDisplayName());
+        response.put("remark", resDto.getRemark());
 
-        return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(responseVo);
+        return ResponseEntity.ofSuccess().status(HttpStatus.OK).data(response);
+    }
+
+    @GetMapping
+    public ResponsePageEntity findAllProduct(@RequestParam(value = "limit", required = false) Integer limit,
+                                             @RequestParam(value = "offset", required = false) Integer offset,
+                                             @RequestParam(value = "show_disabled", required = false) Boolean showDisabled,
+                                             @RequestParam(value = "product_key", required = true) String productKey,
+                                             @RequestHeader("phe-application-user-token") String userToken) {
+
+        DeviceConditionDto conditionDto = new DeviceConditionDto();
+        conditionDto.setLimit(limit);
+        conditionDto.setOffset(offset);
+        conditionDto.setShowDisabled(showDisabled);
+
+        List<DeviceVO> responseVoList = Lists.newArrayList();
+
+        try {
+            //TODO: userToken的提取和校验，传入service的应为uid
+
+            List<DeviceDto> dtos = deviceService.findByProductKeyPageable(userToken, productKey, conditionDto);
+            for (DeviceDto dto : dtos) {
+                responseVoList.add(DeviceVO.dto2Vo(dto));
+            }
+
+        } catch (ApplicationException ex) {
+            log.error("Find device error.{}", ex.getMessage());
+            return ResponsePageEntity.ofFailed().data("Find device error.");
+        }
+
+        return ResponsePageEntity.ofSuccess().status(HttpStatus.OK).data(responseVoList).total(responseVoList.size());
     }
 
 }

@@ -54,6 +54,7 @@ public class DeviceVO extends AbstractValueObject {
         vo.setDevice_name(dto.getDisplayName());
         vo.setDsn(dto.getDsn());
         vo.setIs_enabled(dto.getIsEnabled());
+        vo.setIs_online(dto.getIsOnline());
         vo.setRemark(dto.getRemark());
     }
 

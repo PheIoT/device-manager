@@ -6,6 +6,7 @@ package com.pheiot.phecloud.pd.service;
 
 import com.pheiot.phecloud.pd.dto.ProductConditionDto;
 import com.pheiot.phecloud.pd.dto.ProductDto;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -58,6 +59,7 @@ public interface ProductService {
      * @param productDto productDto
      */
     @Transactional(rollbackFor = Exception.class)
+    @Modifying
     void update(ProductDto productDto);
 
     /**

@@ -45,6 +45,14 @@ public interface ProductDao extends PagingAndSortingRepository<Product, Long>, J
     Product findByPkey(String dkey);
 
     /**
+     * 根据id查询产品
+     *
+     * @param dkey key
+     * @return Product
+     */
+    Product findByUidAndPkey(String uid, String dkey);
+
+    /**
      * 根据产品名称查找
      *
      * @param displayName displayName
@@ -77,4 +85,7 @@ public interface ProductDao extends PagingAndSortingRepository<Product, Long>, J
     @Modifying
     @Query("delete from Product p where p.pkey in (?1)")
     void deleteByPkeys(List<String> pkeys);
+
+
+    boolean existsProductByUidAndPkey(String uid, String pkey);
 }
